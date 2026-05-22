@@ -1,5 +1,5 @@
-const SUPABASE_URL = (window.KANBAN_CONFIG && window.KANBAN_CONFIG.url) || 'https://uqbybihbwrweznvituxx.supabase.co';
-const SUPABASE_KEY = (window.KANBAN_CONFIG && window.KANBAN_CONFIG.key) || 'sb_publishable_prEVrf5nSmiy5LzZnLBG7Q_vhk2BfQx';
+const SUPABASE_URL = (window.CONFIGURACAO_KANBAN && window.CONFIGURACAO_KANBAN.URL) || 'https://uqbybihbwrweznvituxx.supabase.co';
+const SUPABASE_KEY = (window.CONFIGURACAO_KANBAN && window.CONFIGURACAO_KANBAN.chave) || 'sb_publishable_prEVrf5nSmiy5LzZnLBG7Q_vhk2BfQx';
 const SESSION_KEY = 'sb_session';
 
 const form = document.getElementById('signup-form');
@@ -42,10 +42,21 @@ async function signupAccount({ name, email, password }) {
         data: {
           full_name: name,
           name
-        }
+        },
+        // 🚀 O SEGREDO ESTÁ AQUI: Forçando a rota do e-mail para o repositório correto
+        emailRedirectTo: 'https://aelmichsil.github.io/kanban-supervisor/login.html'
       }
     })
   });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.message || data.error_description || 'Erro ao criar conta.');
+  }
+
+  return data;
+}
 
   const data = await response.json().catch(() => ({}));
 
