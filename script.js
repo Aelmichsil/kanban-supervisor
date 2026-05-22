@@ -33,8 +33,8 @@
    0. CONFIGURAÇÃO DO SUPABASE
    ================================================================ */
 
-const SUPABASE_URL  = (window.KANBAN_CONFIG && window.KANBAN_CONFIG.url) || 'COLE_SUA_URL_AQUI';
-const SUPABASE_PUBLISHABLE = (window.KANBAN_CONFIG && window.KANBAN_CONFIG.key) || 'COLE_SUA_CHAVE_AQUI';
+const SUPABASE_URL = 'https://uqbybihbwrweznvituxx.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_prEVrf5nSmiy5LzZnLBG7Q_vhk2BfQx';
 const DEBUG = false;
 
 const LOCALE = 'pt-BR';
