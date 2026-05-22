@@ -1,5 +1,5 @@
-const SUPABASE_URL = window.KANBAN_CONFIG && window.KANBAN_CONFIG.url;
-const SUPABASE_KEY = window.KANBAN_CONFIG && window.KANBAN_CONFIG.key;
+const SUPABASE_URL = (window.KANBAN_CONFIG && window.KANBAN_CONFIG.url) || 'https://uqbybihbwrweznvituxx.supabase.co';
+const SUPABASE_KEY = (window.KANBAN_CONFIG && window.KANBAN_CONFIG.key) || 'sb_publishable_prEVrf5nSmiy5LzZnLBG7Q_vhk2BfQx';
 const SESSION_KEY = 'sb_session';
 
 const form = document.getElementById('signup-form');
@@ -28,10 +28,6 @@ function persistSession(session) {
 }
 
 async function signupAccount({ name, email, password }) {
-  if (!SUPABASE_URL || !SUPABASE_KEY) {
-    throw new Error('Configuração do Supabase não encontrada.');
-  }
-
   const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
     method: 'POST',
     headers: {
