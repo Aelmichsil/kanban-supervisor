@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Criar conta — Kanban Supervisor N1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="icon.png" type="image/x-icon">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="signup-page">
+  <main class="signup-layout">
+    <section class="signup-hero" aria-label="Informações sobre o cadastro">
+      <div>
+        <div class="signup-brand">
+          <div class="signup-logo" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="2" width="6" height="16" rx="2" fill="#0f0f11" />
+              <rect x="10" y="2" width="6" height="10" rx="2" fill="#0f0f11" />
+            </svg>
+          </div>
+          <div>
+            <p class="signup-kicker">Kanban Supervisor N1</p>
+            <h1>Criar conta</h1>
+          </div>
+        </div>
+        <p style="margin-top: 18px;">Abra seu acesso com nome, email e senha para entrar no quadro e acompanhar o fluxo do time.</p>
+      </div>
+
+      <div class="signup-points">
+        <div class="signup-point">
+          <div>
+            <strong>Cadastro rápido</strong>
+            <span>Preencha nome, email, senha e confirmação em uma única tela.</span>
+          </div>
+        </div>
+        <div class="signup-point">
+          <div>
+            <strong>Acesso seguro</strong>
+            <span>Se a confirmação de email estiver ativa, você recebe o link direto na caixa de entrada.</span>
+          </div>
+        </div>
+        <div class="signup-point">
+          <div>
+            <strong>Volta ao login</strong>
+            <span>Se já tiver conta, volte para a página principal e entre normalmente.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="signup-card" aria-label="Formulário de criação de conta">
+      <h2>Dados da conta</h2>
+      <p class="card-subtitle">Informe seus dados para criar o acesso ao sistema.</p>
+
+      <form id="signup-form" class="signup-form" novalidate>
+        <div>
+          <label for="signup-name">Nome completo *</label>
+          <input type="text" id="signup-name" name="name" placeholder="Ex: Maria Silva" autocomplete="name" maxlength="80" required />
+        </div>
+
+        <div>
+          <label for="signup-email">Email *</label>
+          <input type="email" id="signup-email" name="email" placeholder="seu@email.com" autocomplete="email" required />
+        </div>
+
+        <div>
+          <label for="signup-password">Senha *</label>
+          <input type="password" id="signup-password" name="password" placeholder="Crie uma senha forte" autocomplete="new-password" minlength="6" required />
+        </div>
+
+        <div>
+          <label for="signup-confirm-password">Confirmar senha *</label>
+          <input type="password" id="signup-confirm-password" name="confirmPassword" placeholder="Repita a senha" autocomplete="new-password" minlength="6" required />
+        </div>
+
+        <div id="signup-feedback" class="signup-feedback" role="alert" aria-live="polite"></div>
+
+        <div class="signup-actions">
+          <button type="submit" class="btn-primary" id="signup-submit">Criar conta</button>
+          <a href="index.html" class="btn-secondary" style="display:flex;align-items:center;text-decoration:none;">Voltar para login</a>
+        </div>
+      </form>
+
+      <p class="signup-footer">
+        Ao continuar, você concorda com o uso de seus dados para autenticação no sistema.
+      </p>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="cadastro.js"></script>
+</body>
+
+</html>

@@ -1554,53 +1554,9 @@ if (loginPasswordInput) {
 }
 
 if (loginSignupToggle) {
-  loginSignupToggle.addEventListener('click', async () => {
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    const errorEl = document.getElementById('login-error');
-    const submitBtn = document.getElementById('login-submit');
-
-    if (!email || !password) {
-      if (errorEl) {
-        errorEl.textContent = MESSAGES.auth.fillEmailPassword;
-        errorEl.style.display = 'block';
-      }
-      return;
-    }
-
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Criando conta...';
-    }
-    if (errorEl) errorEl.style.display = 'none';
-    hideResendConfirmation();
-
-    try {
-      const signupResult = await authSignup(email, password);
-
-      if (signupResult.requiresEmailConfirmation) {
-        if (errorEl) {
-          errorEl.textContent = MESSAGES.auth.signupNeedConfirmation;
-          errorEl.style.display = 'block';
-        }
-        showResendConfirmation(email);
-        return;
-      }
-
-      // Conta criada com sessão ativa — esconde o login e mostra o board
-      hideLoginOverlay();
-      loadFromSupabase();
-    } catch (err) {
-      if (errorEl) {
-        errorEl.textContent = err.message;
-        errorEl.style.display = 'block';
-      }
-    } finally {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Entrar';
-      }
-    }
+  loginSignupToggle.addEventListener('click', event => {
+    event.preventDefault();
+    window.location.href = 'cadastro.html';
   });
 } else {
 }
