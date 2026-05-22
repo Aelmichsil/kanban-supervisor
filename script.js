@@ -35,7 +35,8 @@
 
 const SUPABASE_URL = 'https://uqbybihbwrweznvituxx.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_prEVrf5nSmiy5LzZnLBG7Q_vhk2BfQx';
-const DEBUG = false;
+
+const SUPABASE_PUBLISHABLE = SUPABASE_ANON;
 
 const LOCALE = 'pt-BR';
 
