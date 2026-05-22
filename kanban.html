@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <!-- Define a codificação de caracteres para aceitar acentos e símbolos. -->
+  <meta charset="UTF-8" />
+  <!-- Faz a página se adaptar corretamente a celulares e telas menores. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Texto que aparece na aba do navegador. -->
+  <title>Kanban — Supervisor de Equipe</title>
+  <!-- Conecta o carregamento das fontes externas antes do resto da página. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <!-- Importa as fontes usadas no visual do sistema. -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <!-- Ícone pequeno da aba do navegador. -->
+  <link rel="icon" href="icon.png" type="image/x-icon">
+  <!-- Folha de estilo principal da aplicação. -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Container principal que engloba toda a interface. -->
+  <div id="app">
+
+    <!-- ─────────────────────────────────────────────
+         MODAL DE LOGIN: autenticação com Supabase Auth.
+         Aparece como antes do board carregar.
+    ──────────────────────────────────────────────── -->
+    <div class="modal-overlay" id="login-overlay" aria-hidden="false">
+      <div class="modal login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title">
+        <h2 id="login-title">Entrar</h2>
+        <p class="login-subtitle">Autentique-se para acessar.</p>
+        
+        <label for="login-email">Email *</label>
+        <input type="email" id="login-email" placeholder="seu@email.com" />
+        
+        <label for="login-password">Senha *</label>
+        <input type="password" id="login-password" placeholder="Sua senha" />
+        
+        <div id="login-error" class="login-error" style="display:none;"></div>
+        
+        <div class="modal-actions">
+          <button class="btn-primary" id="login-submit" style="width:100%">Entrar</button>
+        </div>
+        
+        <p class="login-footer">
+          Não tem conta? <button id="login-signup-toggle" class="link-button">Crie uma agora</button>
+        </p>
+        <p class="login-footer" id="login-resend-row" style="display:none; margin-top:8px;">
+          Link expirou? <button id="login-resend-confirmation" class="link-button">Reenviar email de confirmação</button>
+        </p>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         HEADER: identidade, meta e ações principais.
+         Os botões "Nova Raia" e "Nova Coluna" ficam
+         aqui para sempre estarem visíveis.
+    ──────────────────────────────────────────────── -->
+    <header>
+      <!-- Área da esquerda do topo: logo, nome e meta do quadro. -->
+      <div class="header-left">
+        <!-- Bloco visual da marca do sistema. -->
+        <div class="logo-mark">
+          <!-- Desenho simples em SVG para o logo. -->
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="6" height="16" rx="2" fill="#0f0f11" />
+            <rect x="10" y="2" width="6" height="10" rx="2" fill="#0f0f11" />
+          </svg>
+        </div>
+
+        <!-- Nome do sistema e contador de dados do quadro. -->
+        <div>
+          <h1>Kanban Supervisor N1</h1>
+          <!-- Contador dinâmico: raias · colunas · cards -->
+          <div class="header-meta" id="board-meta">Carregando...</div>
+        </div>
+      </div>
+
+      <!-- Ações globais do quadro -->
+      <div class="header-actions">
+
+        <!-- Alterna entre modo dark e light -->
+        <button id="theme-toggle-btn" class="header-btn secondary icon-only" aria-label="Alternar tema" title="Alternar tema">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M12 7a5 5 0 1 1-5-5 4 4 0 0 0 5 5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <!-- Um único botão de adicionar com menu para escolher Coluna ou Raia -->
+        <div class="add-menu-wrap">
+          <button id="add-item-btn" class="header-btn plus-only" aria-label="Adicionar item" title="Adicionar">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div id="add-item-menu" class="add-item-menu" aria-hidden="true">
+            <button id="add-item-column" class="add-item-option" type="button">Nova Coluna (setor)</button>
+            <button id="add-item-lane" class="add-item-option" type="button">Nova Linha (status)</button>
+          </div>
+        </div>
+
+        <!-- Informações do usuário e botão de logout -->
+        <div class="header-user">
+          <span id="user-email" class="user-email"></span>
+          <button id="logout-btn" class="header-btn secondary">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <path d="M1 6.5h8M9 1l5 5.5-5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Sair
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- ─────────────────────────────────────────────
+         BOARD: grade principal do Kanban.
+         O JavaScript (script.js) injeta aqui:
+           1. Uma linha de cabeçalho de colunas (fixa)
+           2. Uma linha de raia (lane-row) por raia
+         Cada célula [raia × coluna] aceita cards.
+    ──────────────────────────────────────────────── -->
+    <main id="board"></main>
+
+
+    <!-- ─────────────────────────────────────────────
+         MODAL: janela para criar um novo card.
+         Aberto quando o usuário clica no botão "+"
+         dentro de qualquer célula da grade.
+    ──────────────────────────────────────────────── -->
+    <div class="modal-overlay" id="modal-overlay">
+      <!-- Janela do formulário usada para criar um novo card. -->
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+        <!-- Título dinâmico: mostra "Novo card · [Raia] / [Coluna]" -->
+        <h2 id="modal-title">Novo Card</h2>
+
+        <!-- Campo obrigatório: texto principal do card -->
+        <label for="input-title">Título *</label>
+        <input type="text" id="input-title" placeholder="Ex: Cliente sem sinal desde ontem" maxlength="80" />
+
+        <!-- Campo opcional: detalhes da tarefa -->
+        <label for="input-desc">Descrição</label>
+        <textarea id="input-desc" placeholder="Detalhes opcionais..."></textarea>
+
+        <!-- Tag: cor/categoria que aparece como chip no card -->
+        <label for="input-tag">Tag</label>
+        <select id="input-tag">
+          <option value="">— Sem Tag —</option>
+          <option value="daily">Diário</option>
+          <option value="weekly">Semanal</option>
+          <option value="monthly">Mensal</option>
+        </select>
+
+        <div class="modal-actions">
+          <button class="btn-secondary" id="modal-cancel">Cancelar</button>
+          <button class="btn-primary"   id="modal-confirm">Adicionar Card</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de confirmação para exclusões. -->
+    <div class="modal-overlay confirm-overlay" id="confirm-overlay" aria-hidden="true">
+      <div class="modal confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+        <h2 id="confirm-title">Confirmar ação</h2>
+        <p id="confirm-message" class="confirm-message">Tem certeza que deseja continuar?</p>
+        <div class="modal-actions">
+          <button class="btn-secondary" id="confirm-cancel">Cancelar</button>
+          <button class="btn-primary danger" id="confirm-ok">Sim, excluir</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de entrada de texto para criar nova coluna/linha sem usar prompt nativo. -->
+    <div class="modal-overlay" id="text-modal-overlay" aria-hidden="true">
+      <div class="modal text-modal" role="dialog" aria-modal="true" aria-labelledby="text-modal-title">
+        <h2 id="text-modal-title">Novo item</h2>
+        <label for="text-modal-input" id="text-modal-label">Nome</label>
+        <input type="text" id="text-modal-input" maxlength="60" />
+        <div class="modal-actions">
+          <button class="btn-secondary" id="text-modal-cancel">Cancelar</button>
+          <button class="btn-primary" id="text-modal-confirm">Confirmar</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /#app -->
+
+
+  <!-- Indicador de sincronização com o Supabase (canto inferior direito) -->
+  <div id="sync-status">
+    <!-- Ponto de cor que mostra se o sistema está salvando ou com erro. -->
+    <span class="sync-dot"  style="width:7px;height:7px;border-radius:50%;background:#4a4a58;transition:background 0.3s;"></span>
+    <!-- Texto curto que informa o estado da sincronização. -->
+    <span class="sync-label" style="color:var(--text-secondary);"></span>
+  </div>
+
+
+  <!-- Lógica principal: estado, renderização, drag-and-drop e Supabase -->
+  <!-- Credenciais do Supabase (não enviado ao GitHub — ver .gitignore) -->
+  <script src="config.js"></script>
+  <!-- Lógica principal -->
+  <script src="script.js"></script>
+
+  <!--
+  ─────────────────────────────────────────────────────────────────────
+  BOTÃO "+" EM CADA CÉLULA
+  Os botões de adicionar card dentro das células são criados
+  dinamicamente pelo script.js (função renderCell).
+  Eles abrem o modal já pré-configurado com [laneId + colId].
+  ─────────────────────────────────────────────────────────────────────
+  -->
+
+</body>
+</html>
